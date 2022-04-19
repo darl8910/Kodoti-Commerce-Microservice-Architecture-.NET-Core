@@ -53,15 +53,23 @@ namespace Order.Service.EventHandlers
 
                 // 04. Update Stocks
                 _logger.LogInformation("--- Updating stock");
-                await _catalogProxy.UpdateStockAsync(new ProductInStockUpdateStockCommand
+                try
                 {
-                    Items = notification.Items.Select(x => new ProductInStockUpdateItem
+                    await _catalogProxy.UpdateStockAsync(new ProductInStockUpdateStockCommand
                     {
-                        ProductId = x.ProductId,
-                        Stock = x.Quantity,
-                        Action = ProductInStockAction.Substract
-                    })
-                });
+                        Items = notification.Items.Select(x => new ProductInStockUpdateItem
+                        {
+                            ProductId = x.ProductId,
+                            Stock = x.Quantity,
+                            Action = ProductInStockAction.Substract
+                        })
+                    });
+                }
+                catch
+                {
+                    _logger.LogError("Order couldn't be created because some");
+                    throw new Exception();
+                }
 
                 await trx.CommitAsync();
             }

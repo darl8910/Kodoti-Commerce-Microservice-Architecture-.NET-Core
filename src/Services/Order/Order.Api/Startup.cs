@@ -53,9 +53,11 @@ namespace Order.Api
 
             // ApiUrls
             services.Configure<ApiUrls>(opts => Configuration.GetSection("ApiUrls").Bind(opts));
+            services.Configure<AzureServiceBus>(opts => Configuration.GetSection("AzureServiceBus").Bind(opts));
 
             // Proxies
-            services.AddHttpClient<ICatalogProxy, CatalogHttpProxy>();
+            //services.AddHttpClient<ICatalogProxy, CatalogHttpProxy>();
+            services.AddTransient<ICatalogProxy, CatalogQueueProxy>();
 
             // Event handlers
             services.AddMediatR(Assembly.Load("Order.Service.EventHandlers"));
